@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\HORAD\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\HORAD\\.nuget\\packages"
+    ]
+  }
+}

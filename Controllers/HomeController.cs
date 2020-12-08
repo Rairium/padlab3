@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BLL.Abstract;
+using DataContract;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using padlab.Models;
 using System;
@@ -11,21 +13,44 @@ namespace padlab.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IPostService _postService;
+        public HomeController(IPostService postService)
         {
-            _logger = logger;
+            _postService = postService;
         }
 
         public IActionResult Index()
         {
+            var dtos = _postService.GetPosts();
+            var posts = dtos.Select(x => new PostViewModel() 
+            {
+                Author = x.Author,
+                Content = x.Content,
+                Created = x.Created.ToString()
+            }).ToList();
+            return View(posts);
+        }
+        [HttpGet]
+        public IActionResult CreatePost()
+        {
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult CreatePost(CreatePostViewModel model)
         {
+            if (ModelState.IsValid)
+            {
+                var dto = new PostDto()
+                {
+                    Author = model.Author,
+                    Content = model.Content
+                };
+                _postService.CreatePost(dto);
+                return RedirectToAction("Index");
+            }
             return View();
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
